@@ -5,6 +5,8 @@
 
 #include "xstring.h"
 
+#define APP_VERSION "1.0"
+#define CONFIG_PATH "/etc/ctimelines"
 #define COMMENT_CHAR '#'
 #define INIT_CAPACITY_LIST 8
 
@@ -54,26 +56,27 @@ void emit_timeline_html()
 	int i;
 	struct branch *ptr;
 
-	printf("\t<ul class=\"timeline\">\n");
+	printf("<ul class=\"timeline\">\n");
 
 	for(i = 0; i < branches.count; i++) {
 		ptr = &branches.list[i];
 		printf(
-		"\t<li>\n"
-			"\t\t<div class=\"direction-%s\">\n"
-				"\t\t\t<div class=\"flag-wrapper\">\n"
-					"\t\t\t\t<span class=\"flag\">%s</span>\n"
-					"\t\t\t\t<span class=\"time-wrapper\"><span class=\"time\">%d-%d</span></span>\n"
-				"\t\t\t</div>\n"
-				"\t\t\t<div class=\"desc\">%s</div>\n"
-			"\t\t</div>\n"
-		"\t</li>\n", (i % 2) ? "left" : "right", ptr->name->s,
+		"<li>\n"
+		"	<div class=\"direction-%s\">\n"
+		"		<div class=\"flag-wrapper\">\n"
+		"			<span class=\"flag\">%s</span>\n"
+		"			<span class=\"time-wrapper\"><span class=\"time\">%d-%d</span></span>\n"
+		"		</div>\n"
+		"		<div class=\"desc\">%s</div>\n"
+		"	</div>\n"
+		"</li>\n",
+			(i % 2) ? "left" : "right", ptr->name->s,
 			ptr->age_from, ptr->age_to, ptr->desc->s);
 		string_release(ptr->name);
 		string_release(ptr->desc);
 	}
 
-	printf("\t</ul>\n");
+	printf("</ul>\n");
 }
 
 struct branch *add_branch(const char *name)
@@ -164,61 +167,73 @@ int read_config_line(FILE *f, string *name, string *value)
 	return 0;
 }
 
-int parse_config_file(const char *filename)
+void parse_config_file(FILE *f)
 {
 	string *name = string_alloc(NULL);
 	string *value = string_alloc(NULL);
-	FILE *f;
-	
-	f = fopen(filename, "r");
-	if(!f)
-		return 1;
-		
+
 	while(read_config_line(f, name, value) == 0) {
 		// printf("name: %s; value: %s\n", name->s, value->s);
 		handle_config_context(name->s, value->s);
 		string_reset(name);
 		string_reset(value);
 	}
-		
-	fclose(f);
+	
 	string_release(name);
 	string_release(value);
-	return 0;
 }
 
 void usage()
 {
-	printf("Usage: ctimeline [-h, --help] config_path\n"
+	printf("Usage: ctimeline [-h, --help | -i, --stdin]\n"
 		"Copyright (C) 2021 Aleksandr D. Goncharov (Joursoir)\n"
+		"Version: %s\n"
 		"License: GNU GPL version 3 + X11 License\n"
 		"This is free software: you are free to change and redistribute it.\n"
-		"This program comes with ABSOLUTELY NO WARRANTY.\n");
+		"This program comes with ABSOLUTELY NO WARRANTY.\n", APP_VERSION);
 }
 
 int main(int argc, char **argv)
 {
-	int result;
-	const char *config;
+	FILE *config;
 	if(argc < 2) {
-		usage();
-		return 1;
+		config = fopen(CONFIG_PATH, "r");
+		if(!config) {
+			perror(CONFIG_PATH);
+			return 1;
+		}
 	}
-	if(strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
+	else if(strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
 		usage();
 		return 0;
 	}
-	config = argv[1];
-
-	result = parse_config_file(config);
-	if(result) {
-		perror(config);
+	else if(strcmp(argv[1], "--stdin") == 0 || strcmp(argv[1], "-i") == 0)
+		config = stdin;
+	else {
+		usage();
 		return 1;
 	}
 
+	parse_config_file(config);
+	fclose(config);
+
 	sort_branches_by_age();
 
+	printf("Content-type: text/html\n"
+		"\n"
+		"<html>\n"
+		"<head>\n"
+		"	<title>ctimeline</title>\n"
+		"	<link rel=\"stylesheet\" href=\"static/ctimeline.css\">\n"
+		"</head>\n"
+		""
+		"<body>\n"
+		"<br>\n");
 	emit_timeline_html();
+	printf("<br>\n"
+		"</body>\n"
+		"</html>\n");
+
 	free(branches.list);
 	return 0;	
 }
