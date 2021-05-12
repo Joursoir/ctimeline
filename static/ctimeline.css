@@ -64,6 +64,12 @@ td.form input {
 	font-size: 85%;
 }
 
+.footer {
+	text-align: center;
+	font-size: 70%;
+	color: #ccc;
+}
+
 /* ================ The Timeline ================ */
 
 .timeline {
