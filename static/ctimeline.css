@@ -29,6 +29,41 @@ OTHER DEALINGS IN THE SOFTWARE.
 	font-size: 10pt;
 }
 
+.header {
+	font-size: 250%;
+	color: black;
+}
+
+table {
+	border-spacing: 1em 0em;
+}
+
+tr.sub_text {
+	color: #777;
+}
+
+table td {
+	width: 50%;
+	/*border: 1px solid #a52a2a;*/
+}
+
+td.right_column {
+	vertical-align: top;
+	text-align: right;
+}
+
+td.form {
+	vertical-align: center;
+	text-align: right;
+	white-space: nowrap;
+}
+
+td.form form,
+td.form input {
+	display: inline;
+	font-size: 85%;
+}
+
 /* ================ The Timeline ================ */
 
 .timeline {
