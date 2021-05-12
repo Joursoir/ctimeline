@@ -20,19 +20,22 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#ctimeline {
+	width: 660px;
+	margin-left: auto;
+	margin-right: auto;
+
+	font-family: monospace;
+	font-size: 10pt;
+}
+
 /* ================ The Timeline ================ */
 
 .timeline {
 	position: relative;
-	width: 660px;
-	margin: 0 auto;
-	margin-top: 20px;
-	padding: 1em 0;
-	list-style-type: none;
-
-	font-family: monospace;
-	font-size: 112.5%;
+	padding: 1em;
 	line-height: 1.6em;
+	list-style-type: none;
 }
 
 .timeline:before {
@@ -112,7 +115,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 .direction-right .flag:before {
 	position: absolute;
 	top: 50%;
-	right: -40px;
+	right: -26px;
 	content: ' ';
 	display: block;
 	width: 12px;
@@ -125,7 +128,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 }
 
 .direction-right .flag:before {
-	left: -40px;
+	left: -26px;
 }
 
 .direction-left .flag:after {
