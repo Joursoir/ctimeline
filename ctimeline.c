@@ -5,8 +5,6 @@
 
 #include "ctimeline.h"
 
-#define APP_VERSION "1.0"
-#define CONFIG_PATH "/etc/ctimelines"
 #define COMMENT_CHAR '#'
 #define INIT_CAPACITY_LIST 8
 

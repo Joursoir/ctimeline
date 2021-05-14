@@ -3,6 +3,9 @@
 
 #include "xstring.h"
 
+#define CTIMELINE_VERSION "1.0"
+#define CTIMELINE_CONFIG "/etc/ctimelines"
+
 struct ctimeline_branch {
 	string *name;
 	int age_from;
