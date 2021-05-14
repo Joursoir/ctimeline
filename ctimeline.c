@@ -3,44 +3,48 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "xstring.h"
+#include "ctimeline.h"
 
 #define APP_VERSION "1.0"
 #define CONFIG_PATH "/etc/ctimelines"
 #define COMMENT_CHAR '#'
 #define INIT_CAPACITY_LIST 8
 
-struct branch {
-	string *name;
-	int age_from;
-	int age_to;
-	string *desc;
-};
+struct ctimeline_context ctx; // from ctimeline.h
 
-struct branch_list {
-	struct branch *list;
-	int count;
-	int capacity;
-};
+static void prepare_context()
+{
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.head_title = "Timeline browser";
+	ctx.css = "static/ctimeline.css";
+	ctx.header_title = "CTimeline";
+	ctx.header_desc = "Web frontend for timelines written in C";
 
-struct branch_ll {
-	struct branch *branch;
-	struct branch_ll *prev;
-};
+	ctx.branches.list = NULL;
+	ctx.branches.count = 0;
+	ctx.branches.capacity = 0;
+	ctx.cur_branch = NULL;
+}
 
-struct branch_list branches = { NULL, 0, 0 };
-struct branch *current_branch;
+/*
+ * The function lies.
+ * It doesn't forget the context, just frees dynamic memory
+*/
+static void forget_context()
+{
+	free(ctx.branches.list);
+}
 
 void sort_branches_by_age()
 {
 	int i, j;
-	struct branch *i_ptr, *j_ptr;
-	struct branch tmp;
+	struct ctimeline_branch *i_ptr, *j_ptr;
+	struct ctimeline_branch tmp;
 
-	for(i = 0; i < branches.count; i++) {
-		i_ptr = &branches.list[i];
-		for(j = i+1; j < branches.count; j++) {
-			j_ptr = &branches.list[j];
+	for(i = 0; i < ctx.branches.count; i++) {
+		i_ptr = &ctx.branches.list[i];
+		for(j = i+1; j < ctx.branches.count; j++) {
+			j_ptr = &ctx.branches.list[j];
 			if((j_ptr->age_from > i_ptr->age_from) ||
 						(j_ptr->age_to > i_ptr->age_to) ) {
 				tmp = *i_ptr;
@@ -79,21 +83,22 @@ void emit_timeline_html()
 	printf("</ul>\n");
 }
 
-struct branch *add_branch(const char *name)
-{
-	struct branch *br;
-	branches.count++;
 
-	if(branches.count > branches.capacity) {
-		if(branches.capacity == 0)
-			branches.capacity = INIT_CAPACITY_LIST;
+struct ctimeline_branch *add_branch(const char *name)
+{
+	struct ctimeline_branch *br;
+	ctx.branches.count++;
+
+	if(ctx.branches.count > ctx.branches.capacity) {
+		if(ctx.branches.capacity == 0)
+			ctx.branches.capacity = INIT_CAPACITY_LIST;
 		else
-			branches.capacity *= 2;
-		branches.list = realloc(branches.list,
-			sizeof(struct branch) * branches.capacity);
+			ctx.branches.capacity *= 2;
+		ctx.branches.list = realloc(ctx.branches.list,
+			sizeof(struct ctimeline_branch) * ctx.branches.capacity);
 	}
 
-	br = &branches.list[branches.count-1];
+	br = &ctx.branches.list[ctx.branches.count-1];
 	br->name = string_alloc(name);
 	br->age_from = 0;
 	br->age_to = 0;
@@ -104,26 +109,20 @@ struct branch *add_branch(const char *name)
 void handle_config_context(const char *name, const char *value)
 {
 	if(strcmp(name, "branch.name") == 0) {
-		current_branch = add_branch(value);
+		ctx.cur_branch = add_branch(value);
+	}
+	else if(!ctx.cur_branch) {
+		return;
 	}
 	else if(strcmp(name, "branch.age_from") == 0) {
-		if(!current_branch)
-			return;
-
-		current_branch->age_from = atoi(value);
+		ctx.cur_branch->age_from = atoi(value);
 	}
 	else if(strcmp(name, "branch.age_to") == 0) {
-		if(!current_branch)
-			return;
-
-		current_branch->age_to = atoi(value);
+		ctx.cur_branch->age_to = atoi(value);
 	}
 	else if(strcmp(name, "branch.desc") == 0) {
-		if(!current_branch)
-			return;
-
-		string_release(current_branch->desc);
-		current_branch->desc = string_alloc(value);
+		string_release(ctx.cur_branch->desc);
+		ctx.cur_branch->desc = string_alloc(value);
 	}
 }
 
