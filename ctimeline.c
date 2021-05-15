@@ -53,35 +53,6 @@ void sort_branches_by_age()
 	}
 }
 
-void emit_timeline_html()
-{
-	int i;
-	struct branch *ptr;
-
-	printf("<ul class=\"timeline\">\n");
-
-	for(i = 0; i < branches.count; i++) {
-		ptr = &branches.list[i];
-		printf(
-		"<li>\n"
-		"	<div class=\"direction-%s\">\n"
-		"		<div class=\"flag-wrapper\">\n"
-		"			<span class=\"flag\">%s</span>\n"
-		"			<span class=\"time-wrapper\"><span class=\"time\">%d-%d</span></span>\n"
-		"		</div>\n"
-		"		<div class=\"desc\">%s</div>\n"
-		"	</div>\n"
-		"</li>\n",
-			(i % 2) ? "left" : "right", ptr->name->s,
-			ptr->age_from, ptr->age_to, ptr->desc->s);
-		string_release(ptr->name);
-		string_release(ptr->desc);
-	}
-
-	printf("</ul>\n");
-}
-
-
 struct ctimeline_branch *add_branch(const char *name)
 {
 	struct ctimeline_branch *br;
@@ -226,7 +197,6 @@ int main(int argc, char **argv)
 		""
 		"<body>\n"
 		"<br>\n");
-	emit_timeline_html();
 	printf("<br>\n"
 		"</body>\n"
 		"</html>\n");
