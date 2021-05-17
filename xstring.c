@@ -58,19 +58,22 @@ static void string_realloc(string *str, int cap)
 
 void string_addch(string *str, int ch)
 {
-	if(str->capacity <= (str->len + 1)) {
-		int i;
-		int updated_cap = str->capacity + INIT_LEN_STRING;
-		char *tmp_s = str->s;
-		str->s = malloc(sizeof(char) * (updated_cap + 1));
-		for(i = 0; i < updated_cap; i++)
-			str->s[i] = (i >= str->capacity) ? '\0' : tmp_s[i];
-
-		str->capacity = updated_cap;
-		free(tmp_s);
-	}
+	if((str->len + 1) >= str->capacity)
+		string_realloc(str, str->capacity + INIT_LEN_STRING);
 
 	str->s[str->len] = ch;
 	str->len++;
+	str->s[str->len] = '\0';
+}
+
+void string_addstr(string *str, const char *src, size_t src_len)
+{
+	if((str->len + src_len) >= str->capacity)
+		string_realloc(str, str->capacity + src_len);
+
+	while(src_len > 0 && (str->s[str->len] = *src++)) {
+		src_len--;
+		str->len++;
+	}
 	str->s[str->len] = '\0';
 }
