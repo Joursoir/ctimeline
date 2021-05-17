@@ -4,6 +4,7 @@
 #include <ctype.h>
 
 #include "ctimeline.h"
+#include "ui-common.h"
 
 #define COMMENT_CHAR '#'
 #define INIT_CAPACITY_LIST 8
@@ -151,56 +152,17 @@ void parse_config_file(FILE *f)
 	string_release(value);
 }
 
-void usage()
-{
-	printf("Usage: ctimeline [-h, --help | -i, --stdin]\n"
-		"Copyright (C) 2021 Aleksandr D. Goncharov (Joursoir)\n"
-		"Version: %s\n"
-		"License: GNU GPL version 3 + X11 License\n"
-		"This is free software: you are free to change and redistribute it.\n"
-		"This program comes with ABSOLUTELY NO WARRANTY.\n", APP_VERSION);
-}
-
 int main(int argc, char **argv)
 {
-	FILE *config;
-	if(argc < 2) {
-		config = fopen(CONFIG_PATH, "r");
-		if(!config) {
-			perror(CONFIG_PATH);
-			return 1;
-		}
-	}
-	else if(strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
-		usage();
-		return 0;
-	}
-	else if(strcmp(argv[1], "--stdin") == 0 || strcmp(argv[1], "-i") == 0)
-		config = stdin;
-	else {
-		usage();
-		return 1;
-	}
+	prepare_context();
+	parse_config_file(CTIMELINE_CONFIG);
 
-	parse_config_file(config);
-	fclose(config);
+	print_http_headers();
+	print_document_start();
+	print_document_header();
+	print_timelines();
+	print_document_end();
 
-	sort_branches_by_age();
-
-	printf("Content-type: text/html\n"
-		"\n"
-		"<html>\n"
-		"<head>\n"
-		"	<title>ctimeline</title>\n"
-		"	<link rel=\"stylesheet\" href=\"static/ctimeline.css\">\n"
-		"</head>\n"
-		""
-		"<body>\n"
-		"<br>\n");
-	printf("<br>\n"
-		"</body>\n"
-		"</html>\n");
-
-	free(branches.list);
+	forget_context();
 	return 0;	
 }
