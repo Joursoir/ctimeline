@@ -10,6 +10,7 @@ typedef struct tag_string {
 } string;
 
 string *string_alloc(const char *text);
+string *string_nalloc(const char *text, size_t text_len);
 void string_release(string *str);
 void string_reset(string *str);
 void string_addch(string *str, int ch);
