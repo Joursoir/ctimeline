@@ -69,10 +69,10 @@ struct ctimeline_branch *add_branch(const char *name)
 	}
 
 	br = &ctx.branches.list[ctx.branches.count-1];
-	br->name = string_alloc(name);
+	br->name = string_alloc(NULL, name);
 	br->age_from = 0;
 	br->age_to = 0;
-	br->desc = string_alloc("No description");
+	br->desc = string_alloc(NULL, "No description");
 	return br;
 }
 
@@ -91,8 +91,8 @@ void handle_config_context(const char *name, const char *value)
 		ctx.cur_branch->age_to = atoi(value);
 	}
 	else if(strcmp(name, "branch.desc") == 0) {
-		string_release(ctx.cur_branch->desc);
-		ctx.cur_branch->desc = string_alloc(value);
+		ctx.cur_branch->desc = string_alloc(
+			ctx.cur_branch->desc, value);
 	}
 }
 

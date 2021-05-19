@@ -3,27 +3,36 @@
 
 #include "xstring.h"
 
-string *string_alloc(const char *text)
+string *string_alloc(string *str, const char *text)
 {
-	return string_nalloc(text, 
+	return string_nalloc(str, text, 
 		(text) ? strlen(text) : INIT_LEN_STRING);
 }
 
-string *string_nalloc(const char *text, size_t text_len)
+string *string_nalloc(string *str, const char *text, size_t text_len)
 {
-	string *str = malloc(sizeof(string));
-	str->s = malloc(sizeof(char) * (text_len + 1));
-	if(text) {
-		strncpy(str->s, text, text_len);
+	if(!str) {
+		str = malloc(sizeof(string));
+		str->s = malloc(sizeof(char) * (text_len + 1));
 		str->capacity = text_len;
-		str->len = text_len;
-		str->s[text_len] = '\0';
 	}
 	else {
-		str->len = 0;
-		str->capacity = text_len;
-		str->s[0] = '\0';
+		if(text_len >= str->capacity) {
+			free(str->s);
+			str->s = malloc(sizeof(char) * (text_len + 1));
+			str->capacity = text_len;
+		}
+
 	}
+
+	if(text) {
+		strncpy(str->s, text, text_len);
+		str->len = text_len;
+	}
+	else
+		str->len = 0;
+
+	str->s[str->len] = '\0';
 	return str;
 }
 
