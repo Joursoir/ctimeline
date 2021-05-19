@@ -136,13 +136,16 @@ int read_config_line(FILE *f, string *name, string *value)
 	return 0;
 }
 
-void parse_config_file(FILE *f)
+int parse_config_file(const char *fname)
 {
-	string *name = string_alloc(NULL);
-	string *value = string_alloc(NULL);
+	FILE *f = fopen(fname, "r");
+	if(!f) // #TODO: print warning in logs
+		return 1; 
+
+	string *name = string_alloc(NULL, NULL);
+	string *value = string_alloc(NULL, NULL);
 
 	while(read_config_line(f, name, value) == 0) {
-		// printf("name: %s; value: %s\n", name->s, value->s);
 		handle_config_context(name->s, value->s);
 		string_reset(name);
 		string_reset(value);
@@ -150,6 +153,8 @@ void parse_config_file(FILE *f)
 	
 	string_release(name);
 	string_release(value);
+	fclose(f);
+	return 0;
 }
 
 int main(int argc, char **argv)
