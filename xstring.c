@@ -38,19 +38,14 @@ string *string_nalloc(string *str, const char *text, size_t text_len)
 
 void string_release(string *str)
 {
-	if(str->s) {
-		free(str->s);
-		str->s = NULL;
-	}
+	free(str->s);
 	free(str);
 }
 
 void string_reset(string *str)
 {
-	if(str->s) {
-		str->s[0] = '\0';
-		str->len = 0;
-	}
+	str->s[0] = '\0';
+	str->len = 0;
 }
 
 static void string_realloc(string *str, int cap)
