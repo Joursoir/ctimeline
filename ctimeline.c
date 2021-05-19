@@ -80,7 +80,7 @@ struct ctimeline_branch *add_branch(const char *name)
 	return br;
 }
 
-void handle_config_context(const char *name, const char *value)
+void handle_branch_context(const char *name, const char *value)
 {
 	if(strcmp(name, "branch.name") == 0) {
 		ctx.cur_branch = add_branch(value);
@@ -98,6 +98,28 @@ void handle_config_context(const char *name, const char *value)
 		ctx.cur_branch->desc = string_alloc(
 			ctx.cur_branch->desc, value);
 	}
+}
+
+void handle_config_context(const char *name, const char *value)
+{
+	if(strcmp(name, "title") == 0) {
+		ctx.head_title = string_alloc(
+			ctx.head_title, value);
+	}
+	else if(strcmp(name, "css") == 0) {
+		ctx.css = string_alloc(
+			ctx.css, value);
+	}
+	else if(strcmp(name, "header.title") == 0) {
+		ctx.header_title = string_alloc(
+			ctx.header_title, value);
+	}
+	else if(strcmp(name, "header.desc") == 0) {
+		ctx.header_desc = string_alloc(
+			ctx.header_desc, value);
+	}
+	else
+		handle_branch_context(name, value);
 }
 
 void skip_line(FILE *f)
