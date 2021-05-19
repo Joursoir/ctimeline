@@ -14,10 +14,10 @@ struct ctimeline_context ctx; // from ctimeline.h
 static void prepare_context()
 {
 	memset(&ctx, 0, sizeof(ctx));
-	ctx.head_title = "Timeline browser";
-	ctx.css = "static/ctimeline.css";
-	ctx.header_title = "CTimeline";
-	ctx.header_desc = "Web frontend for timelines written in C";
+	ctx.head_title = string_alloc(NULL, "Timeline browser");
+	ctx.css = string_alloc(NULL, "static/ctimeline.css");
+	ctx.header_title = string_alloc(NULL, "CTimeline");
+	ctx.header_desc = string_alloc(NULL, "Web frontend for timelines written in C");
 
 	ctx.branches.list = NULL;
 	ctx.branches.count = 0;
@@ -31,6 +31,10 @@ static void prepare_context()
 */
 static void forget_context()
 {
+	string_release(ctx.head_title);
+	string_release(ctx.css);
+	string_release(ctx.header_title);
+	string_release(ctx.header_desc);
 	free(ctx.branches.list);
 }
 

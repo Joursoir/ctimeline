@@ -20,11 +20,11 @@ struct ctimeline_branch_list {
 };
 
 struct ctimeline_context {
-	char *head_title;
-	char *css;
+	string *head_title;
+	string *css;
 	// char *favicon;
-	char *header_title;
-	char *header_desc;
+	string *header_title;
+	string *header_desc;
 	
 	struct ctimeline_branch_list branches;
 	struct ctimeline_branch *cur_branch;

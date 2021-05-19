@@ -13,8 +13,8 @@ void print_document_start()
 {
 	printf("<html>\n");
 	printf("<head>\n");
-	printf("<title>%s</title>\n", ctx.head_title);
-	printf("<link rel='stylesheet' href='%s'>\n", ctx.css);
+	printf("<title>%s</title>\n", ctx.head_title->s);
+	printf("<link rel='stylesheet' href='%s'>\n", ctx.css->s);
 	printf("</head>\n");
 	printf("</body>\n");
 }
@@ -27,12 +27,12 @@ void print_document_header()
 
 	printf("<tr>\n");
 	printf(
-		"<td><p class='header'>%s</p></td>\n", ctx.header_title);
+		"<td><p class='header'>%s</p></td>\n", ctx.header_title->s);
 	printf("</tr>\n");
 
 	printf("<tr class='sub_text'>\n");
 	printf(
-		"<td>%s</td>\n", ctx.header_desc);
+		"<td>%s</td>\n", ctx.header_desc->s);
 	printf("</tr>\n");
 
 	printf("</table>\n");
