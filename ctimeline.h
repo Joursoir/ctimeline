@@ -4,7 +4,7 @@
 #include "xstring.h"
 
 #define CTIMELINE_VERSION "1.0"
-#define CTIMELINE_CONFIG "/etc/ctimelines"
+#define CTIMELINE_CONFIG "/etc/ctimelinerc"
 
 struct ctimeline_branch {
 	string *name;
