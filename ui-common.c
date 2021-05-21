@@ -63,8 +63,6 @@ void print_timelines()
 		"</li>\n",
 			(i % 2) ? "left" : "right", br->name->s,
 			br->age_from, br->age_to, br->desc->s);
-		string_release(br->name);
-		string_release(br->desc);
 	}
 
 	printf("</ul>\n");

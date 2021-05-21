@@ -31,10 +31,15 @@ static void prepare_context()
 */
 static void forget_context()
 {
+	int i;
 	string_release(ctx.head_title);
 	string_release(ctx.css);
 	string_release(ctx.header_title);
 	string_release(ctx.header_desc);
+	for(i = 0; i < ctx.branches.count; i++) {
+		string_release(ctx.branches.list[i].name);
+		string_release(ctx.branches.list[i].desc);
+	}
 	free(ctx.branches.list);
 }
 
