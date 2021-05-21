@@ -43,24 +43,23 @@ static void forget_context()
 	free(ctx.branches.list);
 }
 
+static int cmp_by_age(const void *f, const void *s)
+{
+	struct ctimeline_branch *b1 = (struct ctimeline_branch *)f;
+	struct ctimeline_branch *b2 = (struct ctimeline_branch *)s;
+
+	if(b2->age_to == b1->age_to) {
+		return b2->age_from - b1->age_from;
+	}
+	else
+		return b2->age_to - b1->age_to;
+}
+
 void sort_branches_by_age()
 {
-	int i, j;
-	struct ctimeline_branch *i_ptr, *j_ptr;
-	struct ctimeline_branch tmp;
-
-	for(i = 0; i < ctx.branches.count; i++) {
-		i_ptr = &ctx.branches.list[i];
-		for(j = i+1; j < ctx.branches.count; j++) {
-			j_ptr = &ctx.branches.list[j];
-			if((j_ptr->age_from > i_ptr->age_from) ||
-						(j_ptr->age_to > i_ptr->age_to) ) {
-				tmp = *i_ptr;
-				*i_ptr = *j_ptr;
-				*j_ptr = tmp;
-			}
-		}
-	}
+	qsort(ctx.branches.list,
+		ctx.branches.count, sizeof(struct ctimeline_branch),
+		cmp_by_age);
 }
 
 struct ctimeline_branch *add_branch(const char *name)
@@ -192,6 +191,7 @@ int main(int argc, char **argv)
 {
 	prepare_context();
 	parse_config_file(CTIMELINE_CONFIG);
+	sort_branches_by_age();
 
 	print_http_headers();
 	print_document_start();
