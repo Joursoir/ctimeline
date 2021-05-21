@@ -15,7 +15,7 @@ static void prepare_context()
 {
 	memset(&ctx, 0, sizeof(ctx));
 	ctx.head_title = string_alloc(NULL, "Timeline browser");
-	ctx.css = string_alloc(NULL, "static/ctimeline.css");
+	ctx.css = string_alloc(NULL, "ctimeline.css");
 	ctx.header_title = string_alloc(NULL, "CTimeline");
 	ctx.header_desc = string_alloc(NULL, "Web frontend for timelines written in C");
 
